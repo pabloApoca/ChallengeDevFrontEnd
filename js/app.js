@@ -150,6 +150,8 @@ function mostrarUsuarios(){
  * @return void modificacion del arreglo auxUsuarios al ingresar un nuevo Objeto.
  */
 function agregarUsuario() {
+
+
   var nombre = document.getElementById('inputNombre').value;
   var apellido = document.getElementById('inputApellido').value;
   var dni = parseFloat(document.getElementById('inputDni').value);
@@ -157,6 +159,11 @@ function agregarUsuario() {
   var consumo = parseFloat(document.getElementById('inputConKw').value);
   var deuda = parseFloat(document.getElementById('inputDeuda').value);
   
+  if(nombre === '' || apellido === '' || Number.isNaN(dni) || tipoDom === ''
+    || Number.isNaN(consumo) || Number.isNaN(deuda)) {
+    return;
+  }
+
   const user = {
     "nombre": nombre,
     "apellido": apellido,

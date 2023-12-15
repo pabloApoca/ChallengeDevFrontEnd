@@ -1,22 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>PRISMA SUR</title>
-    <link href="css/estilos.css" rel="stylesheet">
-
-    <!-- CDN de Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- <link href="css/estilos.css" rel="stylesheet"> -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 </head>
+
 <body>
 
-    <div class="w-full flex justify-center">
-
-        <div id="ulListado" class="py-10"></div>
+    <div class="container w-full flex pt-10">
+        <button class="btn btn-secondary" onclick="ordAlfabNombre()">Ordenar por Nombre</button>
+        <button class="btn btn-danger mx-8" onclick="filtrarDeudores()">Filtrar clientes deudores</button>
+        <button class="btn btn-warning" onclick="resetearUsuarios()">Resetear usuarios</button>
     </div>
 
+    <div class="container w-full flex justify-end pt-10">
+        <input type="number" class="form-control w-[300px]" id="buscar" name="buscar" placeholder="Buscar por DNI">
+        <button class="btn btn-info ml-2" onclick="buscarPorDni()">Buscar</button>
+    </div>
 
+    <div class="container pt-10" id="lista">
+    </div>
+
+    <div class="container">
+        <form class="row g-3">
+            <div class="col-md-6">
+                <label for="inputNombre" class="form-label">Nombre</label>
+                <input type="text" class="form-control" id="inputNombre" name="inputNombre"
+                    placeholder="Ingrese Nombre">
+            </div>
+            <div class="col-md-6">
+                <label for="inputApellido" class="form-label">Apellido</label>
+                <input type="text" class="form-control" id="inputApellido" name="inputApellido"
+                    placeholder="Ingrese Apellido">
+            </div>
+            <div class="col-md-6">
+                <label for="inputDni" class="form-label">DNI</label>
+                <input type="number" class="form-control" id="inputDni" name="inputDni" placeholder="Ingrese DNI">
+            </div>
+            <div class="col-md-4">
+                <label for="inputTdom" class="form-label">Tipo domicilio</label>
+                <select id="inputTdom" name="inputTdom" class="form-select">
+                    <option selected disabled value="">Elige su tipo domicilio</option>
+                    <option value="Comercial">Comercial</option>
+                    <option value="Residencial">Residencial</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="inputConKw" class="form-label">Consumo KW</label>
+                <input type="number" class="form-control" id="inputConKw" name="inputConKw"
+                    placeholder="Ingrese el consumo en KW">
+            </div>
+            <div class="col-md-6">
+                <label for="inputDeuda" class="form-label">Deuda</label>
+                <input type="number" class="form-control" id="inputDeuda" name="inputDeuda" placeholder="Ingrese deuda">
+            </div>
+            <div class="col-12 flex justify-center">
+                <div onclick="agregarUsuario()" class="btn btn-primary">Agregar cliente</div>
+            </div>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="js/app.js"></script>
 </body>
+
 </html>

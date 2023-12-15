@@ -1,6 +1,21 @@
+/**
+ * A integer number
+ * @type {number}
+ * @default 2.25
+ */
 var residencial = 2.25;
+
+/**
+ * A integer number
+ * @type {number}
+ * @default 4.5
+ */
 var comercial = 4.5;
 
+/**
+ * Arreglo de usuarios
+ * @type {Array<Object>}
+ */
 let usuarios = [
   {
     "nombre": "Juan Marcelo",
@@ -61,49 +76,30 @@ let usuarios = [
     "apellido": "Lopez",
     "dni": 38557744,
     "tipoDomicilio": "Residencial",
-    "consumoKw": 320,
+    "consumoKw": 1990,
     "deuda": 2850,
     "totalPago": 0
   },
 ]
 
+/**
+ * Arreglo de una copia del arreglo de usuarios
+ * @type {Array<Object>}
+ */
+let auxUsuarios = usuarios;
 
+
+/**
+ * Calcula el total a pagar del usuario.
+ *
+ * @param Object usuario.
+ * @return void modificacion del campo totalPago del usuario.
+ */
 function calcularPago(user) {
-  let totalPagar = 0;
 
-  if (user.tipoDomicilio === "Comercial") totalPagar = user.consumoKw * comercial;
-  if (user.tipoDomicilio === "Residencial") totalPagar = user.consumoKw * residencial;
+  if (user.tipoDomicilio === "Comercial") user.totalPago = user.consumoKw * comercial;
+  if (user.tipoDomicilio === "Residencial") user.totalPago = user.consumoKw * residencial;
 
-  user.totalPago = totalPagar;
-}
-
-
-function calcularPagosUsuarios() {
-  var lista = document.getElementById("ulListado");
-
-  usuarios.forEach(function (data) {
-    calcularPago(data);
-    var linew = document.createElement("li");
-    var contenido = document.createTextNode(data.nombre + " | " + data.apellido + " | " + data.dni + " | "
-      + data.tipoDomicilio + " | " + data.consumoKw + " | " + data.deuda + " | " + data.totalPago);
-    lista.appendChild(linew);
-    linew.appendChild(contenido);
-  });
-}
-
-
-function agregarUsuario(user) {
-  usuarios.push(user);
-}
-
-
-function eliminarUsuario(dni) {
-  const pos = usuarios.map(usuario => usuario.dni).indexOf(dni);
-  usuarios.splice(pos, 1);
-}
-
-
-function descuento(user) {
   if (user.deuda === 0) {
     if (user.tipoDomicilio === "Residencial") {
       if (user.consumoKw > 2000 && user.consumoKw <= 5000) user.totalPago = user.totalPago - (user.totalPago * 10) / 100;
@@ -118,35 +114,125 @@ function descuento(user) {
   }
 }
 
+
+/**
+ * Muestra en la interfaz de usuario una tabla del arreglo de auxUsuarios, con el boton eliminar usuario.
+ *
+ * @return void - Lista de usuarios.
+ */
+function mostrarUsuarios(){
+
+  var tablaUsuarios = '<table id="usuarios" class="table table-dark table-hover">';
+  tablaUsuarios = tablaUsuarios+'<tr> <th>Nombre</th> <th>Apellido</th> <th>DNI</th> <th>Tipo domicilio</th> <th>Consumo KW</th> <th>Deuda</th> <th>Total a pagar</th> <th>-</th></tr>';
+  auxUsuarios.forEach( user => {
+    calcularPago(user);
+    tablaUsuarios=tablaUsuarios+'<tr>';
+    tablaUsuarios=tablaUsuarios+'<td>'+user.nombre+'</td>';
+    tablaUsuarios=tablaUsuarios+'<td>'+user.apellido+'</td>';
+    tablaUsuarios=tablaUsuarios+'<td>'+user.dni+'</td>';
+    tablaUsuarios=tablaUsuarios+'<td>'+user.tipoDomicilio+'</td>';
+    tablaUsuarios=tablaUsuarios+'<td>'+user.consumoKw+'</td>';
+    tablaUsuarios=tablaUsuarios+'<td>$'+user.deuda+'</td>';
+    tablaUsuarios=tablaUsuarios+'<td>$'+user.totalPago+'</td>';
+    tablaUsuarios=tablaUsuarios+'<td><button type="button" class="btn bg-red-500 btn-danger" onclick="eliminarUsuario('+user.dni+')">Eliminar</button></td>';
+    tablaUsuarios=tablaUsuarios+'</tr>';
+    
+  });
+  tablaUsuarios = tablaUsuarios+'</table>';
+
+  document.getElementById('lista').innerHTML=tablaUsuarios;
+}
+
+
+/**
+ * Agrega un usuario a la lista de auxUsuarios y lo muestra en pantalla.
+ *
+ * @return void modificacion del arreglo auxUsuarios al ingresar un nuevo Objeto.
+ */
+function agregarUsuario() {
+  var nombre = document.getElementById('inputNombre').value;
+  var apellido = document.getElementById('inputApellido').value;
+  var dni = parseFloat(document.getElementById('inputDni').value);
+  var tipoDom = document.getElementById('inputTdom').value;
+  var consumo = parseFloat(document.getElementById('inputConKw').value);
+  var deuda = parseFloat(document.getElementById('inputDeuda').value);
+  
+  const user = {
+    "nombre": nombre,
+    "apellido": apellido,
+    "dni": dni,
+    "tipoDomicilio": tipoDom,
+    "consumoKw": consumo,
+    "deuda": deuda,
+    "totalPago": 0
+  };
+  calcularPago(user);
+  auxUsuarios.push(user);
+  mostrarUsuarios();
+}
+
+
+/**
+ * Busca un usuario por DNI y lo elimina de la lista de auxUsuarios.
+ *
+ * @param Integer dni.
+ * @return void modificacion del arreglo auxUsuarios al eliminar un Objeto.
+ */
+function eliminarUsuario(dni) {
+  const pos = auxUsuarios.map(usuario => usuario.dni).indexOf(dni);
+  auxUsuarios.splice(pos, 1);
+  mostrarUsuarios();
+}
+
+
+/**
+ * Filtra la lista de auxUsuarios cuando la deuda del usuario sea mayor a  0.
+ *
+ * @return void modificacion del arreglo auxUsuarios al mostrar los usuarios filtrados.
+ */
 function filtrarDeudores() {
-  usuarios = usuarios.filter(usuario => usuario.deuda > 0);
+  auxUsuarios = auxUsuarios.filter(usuario => usuario.deuda > 0);
+  mostrarUsuarios();
 }
 
+/**
+ * Ordena alfabeticament la lista de usuario por nombre de usuario.
+ *
+ * @return void modificacion del arreglo auxUsuarios en orden alfabetico.
+ */
 function ordAlfabNombre() {
-  usuarios = usuarios.sort((a,b) => a.nombre.localeCompare(b.nombre));
+  auxUsuarios = auxUsuarios.sort((a,b) => a.nombre.localeCompare(b.nombre));
+  mostrarUsuarios();
 }
 
 
-function buscarPorDni(dni) {
-  const pos = usuarios.map(usuario => usuario.dni).indexOf(dni);
-  console.log(usuarios[pos]);
+/**
+ * Busca un usuario por DNI y lo muestra por pantalla como unico resultado.
+ *
+ * @return void modificacion del arreglo con un unico resultado.
+ */
+function buscarPorDni() {
+  var dni = parseFloat(document.getElementById('buscar').value);
+  if(dni) {
+    const pos = auxUsuarios.map(usuario => usuario.dni).indexOf(dni);
+    console.log(auxUsuarios[pos]);
+    let usuarioUnico = [];
+    usuarioUnico.push(auxUsuarios[pos])
+    auxUsuarios = usuarioUnico;
+    mostrarUsuarios();
+  }
 }
 
-const user1 = {
-  "nombre": "Esteban Lautaro",
-  "apellido": "Lopez",
-  "dni": 34775547,
-  "tipoDomicilio": "Comercial",
-  "consumoKw": 7800,
-  "deuda": 1000,
-  "totalPago": 0
-};
-// eliminarUsuario(35448521);
-agregarUsuario(user1);
-calcularPagosUsuarios();
-descuento(user1);
-// filtrarDeudores();
-ordAlfabNombre();
-console.log(usuarios)
-buscarPorDni(38557744);
 
+/**
+ * Resetea el arreglo auxUsuarios y lo igual al arreglo usuarios.
+ *
+ * @return void modificacion del arreglo auxUsuarios.
+ */
+function resetearUsuarios() {
+  auxUsuarios = usuarios;
+  mostrarUsuarios();
+}
+
+
+mostrarUsuarios();

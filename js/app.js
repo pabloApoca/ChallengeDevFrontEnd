@@ -120,27 +120,27 @@ function calcularPago(user) {
  *
  * @return void - Lista de usuarios.
  */
-function mostrarUsuarios(){
+function mostrarUsuarios() {
 
-  var tablaUsuarios = '<table id="usuarios" class="table table-dark table-hover">';
-  tablaUsuarios = tablaUsuarios+'<tr> <th>Nombre</th> <th>Apellido</th> <th>DNI</th> <th>Tipo domicilio</th> <th>Consumo KW</th> <th>Deuda</th> <th>Total a pagar</th> <th>-</th></tr>';
-  auxUsuarios.forEach( user => {
+  var tablaUsuarios = '<table id="usuarios" class="table table-dark table-hover shadow-lg">';
+  tablaUsuarios = tablaUsuarios + '<tr> <th>Nombre</th> <th>Apellido</th> <th>DNI</th> <th>Tipo domicilio</th> <th>Consumo KW</th> <th>Deuda</th> <th>Total a pagar</th> <th>-</th></tr>';
+  auxUsuarios.forEach(user => {
     calcularPago(user);
-    tablaUsuarios=tablaUsuarios+'<tr>';
-    tablaUsuarios=tablaUsuarios+'<td>'+user.nombre+'</td>';
-    tablaUsuarios=tablaUsuarios+'<td>'+user.apellido+'</td>';
-    tablaUsuarios=tablaUsuarios+'<td>'+user.dni+'</td>';
-    tablaUsuarios=tablaUsuarios+'<td>'+user.tipoDomicilio+'</td>';
-    tablaUsuarios=tablaUsuarios+'<td>'+user.consumoKw+'</td>';
-    tablaUsuarios=tablaUsuarios+'<td>$'+user.deuda+'</td>';
-    tablaUsuarios=tablaUsuarios+'<td>$'+user.totalPago+'</td>';
-    tablaUsuarios=tablaUsuarios+'<td><button type="button" class="btn bg-red-500 btn-danger" onclick="eliminarUsuario('+user.dni+')">Eliminar</button></td>';
-    tablaUsuarios=tablaUsuarios+'</tr>';
-    
-  });
-  tablaUsuarios = tablaUsuarios+'</table>';
+    tablaUsuarios = tablaUsuarios + '<tr>';
+    tablaUsuarios = tablaUsuarios + '<td>' + user.nombre + '</td>';
+    tablaUsuarios = tablaUsuarios + '<td>' + user.apellido + '</td>';
+    tablaUsuarios = tablaUsuarios + '<td>' + user.dni + '</td>';
+    tablaUsuarios = tablaUsuarios + '<td>' + user.tipoDomicilio + '</td>';
+    tablaUsuarios = tablaUsuarios + '<td>' + user.consumoKw + '</td>';
+    tablaUsuarios = tablaUsuarios + '<td>$' + user.deuda + '</td>';
+    tablaUsuarios = tablaUsuarios + '<td>$' + user.totalPago + '</td>';
+    tablaUsuarios = tablaUsuarios + '<td><button type="button" class="btn bg-red-500 btn-danger" onclick="eliminarUsuario(' + user.dni + ')">Eliminar</button></td>';
+    tablaUsuarios = tablaUsuarios + '</tr>';
 
-  document.getElementById('lista').innerHTML=tablaUsuarios;
+  });
+  tablaUsuarios = tablaUsuarios + '</table>';
+
+  document.getElementById('lista').innerHTML = tablaUsuarios;
 }
 
 
@@ -151,15 +151,14 @@ function mostrarUsuarios(){
  */
 function agregarUsuario() {
 
-
   var nombre = document.getElementById('inputNombre').value;
   var apellido = document.getElementById('inputApellido').value;
   var dni = parseFloat(document.getElementById('inputDni').value);
   var tipoDom = document.getElementById('inputTdom').value;
   var consumo = parseFloat(document.getElementById('inputConKw').value);
   var deuda = parseFloat(document.getElementById('inputDeuda').value);
-  
-  if(nombre === '' || apellido === '' || Number.isNaN(dni) || tipoDom === ''
+
+  if (nombre === '' || apellido === '' || Number.isNaN(dni) || tipoDom === ''
     || Number.isNaN(consumo) || Number.isNaN(deuda)) {
     return;
   }
@@ -173,8 +172,11 @@ function agregarUsuario() {
     "deuda": deuda,
     "totalPago": 0
   };
+
+  ocultarMostrar()
   calcularPago(user);
   auxUsuarios.push(user);
+  localStorage.setItem("usuarios", JSON.stringify(auxUsuarios));
   mostrarUsuarios();
 }
 
@@ -188,6 +190,7 @@ function agregarUsuario() {
 function eliminarUsuario(dni) {
   const pos = auxUsuarios.map(usuario => usuario.dni).indexOf(dni);
   auxUsuarios.splice(pos, 1);
+  localStorage.setItem("usuarios", JSON.stringify(auxUsuarios));
   mostrarUsuarios();
 }
 
@@ -202,13 +205,14 @@ function filtrarDeudores() {
   mostrarUsuarios();
 }
 
+
 /**
  * Ordena alfabeticament la lista de usuario por nombre de usuario.
  *
  * @return void modificacion del arreglo auxUsuarios en orden alfabetico.
  */
 function ordAlfabNombre() {
-  auxUsuarios = auxUsuarios.sort((a,b) => a.nombre.localeCompare(b.nombre));
+  auxUsuarios = auxUsuarios.sort((a, b) => a.nombre.localeCompare(b.nombre));
   mostrarUsuarios();
 }
 
@@ -220,7 +224,7 @@ function ordAlfabNombre() {
  */
 function buscarPorDni() {
   var dni = parseFloat(document.getElementById('buscar').value);
-  if(dni) {
+  if (dni) {
     const pos = auxUsuarios.map(usuario => usuario.dni).indexOf(dni);
     console.log(auxUsuarios[pos]);
     let usuarioUnico = [];
@@ -232,14 +236,61 @@ function buscarPorDni() {
 
 
 /**
- * Resetea el arreglo auxUsuarios y lo igual al arreglo usuarios.
+ * Resetea el arreglo auxUsuarios y lo igual al arreglo usuarios, si hay usuarios en el localStorage los toma de ahi.
  *
  * @return void modificacion del arreglo auxUsuarios.
  */
 function resetearUsuarios() {
-  auxUsuarios = usuarios;
+  if (JSON.parse(localStorage.getItem("usuarios"))) {
+    auxUsuarios = JSON.parse(localStorage.getItem("usuarios"));
+  } else {
+    auxUsuarios = usuarios;
+  }
   mostrarUsuarios();
 }
 
 
-mostrarUsuarios();
+/**
+ * Muestro y oculta el div de agregar cliente.
+ *
+ * @return void muestra o oculta div id=agregarUser.
+ */
+function ocultarMostrar() {
+  auxUsuarios = JSON.parse(localStorage.getItem("usuarios"));
+  console.log(auxUsuarios)
+  if (document.getElementById('agregarUser').style.display === "none") {
+    document.getElementById('agregarUser').style.display = "block";
+  } else {
+    document.getElementById('agregarUser').style.display = "none";
+  }
+}
+
+
+/**
+ * Oculta y carga nuevamente la lista de clientes.
+ *
+ * @return void oculta el div id=agregarUser.
+ */
+function cancelar() {
+  auxUsuarios = JSON.parse(localStorage.getItem("usuarios"));
+  document.getElementById('agregarUser').style.display = "none";
+}
+
+
+/**
+ * Carga el localStorage la lista de clientes si es que hay una.
+ *
+ * @return void oculta el div id=agregarUser.
+ */
+function almacenamiento() {
+  if (JSON.parse(localStorage.getItem("usuarios"))) {
+    auxUsuarios = JSON.parse(localStorage.getItem("usuarios"));
+  } else {
+    localStorage.setItem("usuarios", JSON.stringify(auxUsuarios));
+  }
+  mostrarUsuarios();
+}
+
+
+almacenamiento();
+ocultarMostrar();
